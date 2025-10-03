@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Onboarding Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Purple, Black & White Theme with 30% purple, 20% black, 50% white */
+    :root {
+      --primary-purple: #8A2BE2;
+      --secondary-purple: #9370DB;
+      --light-purple: #F0E6FF;
+      --dark-purple: #6A0DAD;
+      --black: #121212;
+      --dark-gray: #1E1E1E;
+      --medium-gray: #2D2D2D;
+      --white: #FFFFFF;
+      --light-gray: #F5F5F5;
+      --text-light: #E0E0E0;
+      --text-dark: #212121;
+      --border-color: #D8BFD8; /* Light purple border */
+      --success: #4CAF50;
+      --warning: #FF9800;
+      --error: #F44336;
+      --border-radius: 10px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Inter', Roboto, Arial, sans-serif;
+      background: var(--white);
+      margin: 0;
+      padding: 0;
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    /* Header - Purple (part of 30%) */
+    .header {
+      background: var(--primary-purple);
+      color: var(--white);
+      padding: 18px 30px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .header h1::before {
+      content: "📊";
+      font-size: 28px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 15px;
+    }
+    
+    /* Buttons - Purple (part of 30%) */
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: var(--primary-purple);
+      color: var(--white);
+    }
+    
+    .btn-secondary {
+      background: var(--white);
+      color: var(--primary-purple);
+      border: 1px solid var(--primary-purple);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn-primary:hover {
+      background: var(--dark-purple);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--light-purple);
+    }
+    
+    /* Filters - White (part of 50%) */
+    .filters-container {
+      background: var(--white);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin: 20px;
+      transition: var(--transition);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    
+    .filters-container.hidden {
+      display: none;
+    }
+    
+    .filters-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .filters-title h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-purple);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .filter-group label {
+      font-size: 12px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+    
+    .date-range-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      grid-column: 1 / -1;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .date-range-title {
+      font-size: 14px;
+      color: var(--primary-purple);
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .date-range-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .filters input,
+    .filters select {
+      padding: 12px 14px;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      font-size: 14px;
+      background: var(--white);
+      color: var(--text-dark);
+      transition: var(--transition);
+      width: 100%;
+    }
+    
+    .filters input:focus,
+    .filters select:focus {
+      border-color: var(--primary-purple);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+    }
+    
+    .filters input::placeholder {
+      color: #9E9E9E;
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-top: 18px;
+      padding: 10px;
+      background: var(--light-purple);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary-purple);
+    }
+    
+    /* Dashboard - White with purple accents (part of 50% white, 30% purple) */
+    .mini-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 20px;
+    }
+    
+    .dash-card {
+      background: var(--white);
+      padding: 24px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dash-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--primary-purple);
+    }
+    
+    .dash-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .dash-card.total::before { background: var(--primary-purple); }
+    .dash-card.active::before { background: var(--success); }
+    .dash-card.pending::before { background: var(--warning); }
+    
+    .dash-card p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+    
+    .dash-card h2 {
+      margin: 10px 0 0;
+      font-size: 32px;
+      font-weight: 700;
+    }
+    
+    .dash-card.total h2 { color: var(--primary-purple); }
+    .dash-card.active h2 { color: var(--success); }
+    .dash-card.pending h2 { color: var(--warning); }
+    
+    /* Client Card - White with purple accents (part of 50% white, 30% purple) */
+    #clientContainer {
+      padding: 0 20px 40px;
+    }
+    
+    .client-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      margin: 0 0 20px 0;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .client-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary-purple);
+    }
+    
+    .client-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary-purple);
+    }
+    
+    .client-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .client-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--primary-purple);
+      font-weight: 600;
+    }
+    
+    .client-header p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: var(--text-dark);
+    }
+    
+    .term-info {
+      font-size: 14px;
+      color: var(--primary-purple);
+      font-weight: 600;
+      background: var(--light-purple);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    
+    .client-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    
+    .col {
+      font-size: 14px;
+    }
+    
+    .col h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: var(--primary-purple);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .col h3::before {
+      content: "•";
+      color: var(--primary-purple);
+      font-size: 20px;
+    }
+    
+    .col p {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+    
+    .col strong {
+      color: var(--text-dark);
+      min-width: 120px;
+      display: inline-block;
+      font-weight: 500;
+    }
+    
+    /* Buttons in cards - Purple (part of 30%) */
+    .btn-group {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .card-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .check-btn {
+      background: var(--primary-purple);
+      color: var(--white);
+    }
+    
+    .delete-btn {
+      background: var(--white);
+      color: var(--error);
+      border: 1px solid var(--error);
+    }
+    
+    .card-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .check-btn:hover {
+      background: var(--dark-purple);
+    }
+    
+    .delete-btn:hover {
+      background: var(--error);
+      color: var(--white);
+    }
+    
+    /* Footer - Black (part of 20%) */
+    .footer {
+      background: var(--black);
+      color: var(--text-light);
+      padding: 20px;
+      text-align: center;
+      margin-top: 40px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .filters {
+        grid-template-columns: 1fr;
+      }
+      
+      .date-range-filters {
+        grid-template-columns: 1fr;
+      }
+      
+      .client-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .client-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+    
+    /* Animation for cards */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .client-card {
+      animation: fadeIn 0.5s ease forwards;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header - Purple -->
+  <header class="header">
+    <h1>Client Onboarding Dashboard</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="toggleFilters">
+        <i class="fas fa-filter"></i>
+        <span class="filter-text">Hide Filters</span>
+      </button>
+      <button class="btn btn-primary" id="addProviderBtn">
+        <i class="fas fa-plus-circle"></i>
+        Add Service Provider
+      </button>
+    </div>
+  </header>
+
+  <!-- Filters - White -->
+  <section class="filters-container" id="filtersSection">
+    <div class="filters-title">
+      <h2><i class="fas fa-search"></i> Filters & Search</h2>
+    </div>
+    
+    <div class="filters">
+      <div class="filter-group">
+        <label for="searchBar">Search Clients</label>
+        <input type="text" id="searchBar" placeholder="Search by name, ID..." onkeyup="filterClients()">
+      </div>
+      
+      <div class="filter-group">
+        <label for="filterCity">City</label>
+        <select id="filterCity" onchange="filterClients()">
+          <option value="all">All Cities</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Delhi">Delhi</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterState">State</label>
+        <select id="filterState" onchange="filterClients()">
+          <option value="all">All States</option>
+          <option value="MH">MH</option>
+          <option value="DL">DL</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterJV">JV Partner</label>
+        <select id="filterJV" onchange="filterClients()">
+          <option value="all">All Partners</option>
+          <option value="Partner X">Partner X</option>
+          <option value="Partner Y">Partner Y</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterOnboarding">Onboarding Status</label>
+        <select id="filterOnboarding" onchange="filterClients()">
+          <option value="all">All Statuses</option>
+          <option value="Completed">Completed</option>
+          <option value="Pending">Pending</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterClientStatus">Client Status</label>
+        <select id="filterClientStatus" onchange="filterClients()">
+          <option value="all">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Prospect">Prospect</option>
+          <option value="On Hold">On Hold</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterSalesPerson">Sales Person</label>
+        <select id="filterSalesPerson" onchange="filterClients()">
+          <option value="all">All Salespersons</option>
+          <option value="John Doe">John Doe</option>
+          <option value="Jane Doe">Jane Doe</option>
+        </select>
+      </div>
+      
+      <!-- Date Range Filters -->
+      <div class="date-range-group">
+        <div class="date-range-title">Onboarding Date Range</div>
+        <div class="date-range-filters">
+          <div class="filter-group">
+            <label for="filterOnboardingDateFrom">From</label>
+            <input type="date" id="filterOnboardingDateFrom" onchange="filterClients()">
+          </div>
+          <div class="filter-group">
+            <label for="filterOnboardingDateTo">To</label>
+            <input type="date" id="filterOnboardingDateTo" onchange="filterClients()">
+          </div>
+        </div>
+      </div>
+      
+      <div class="date-range-group">
+        <div class="date-range-title">Last Transaction Date Range</div>
+        <div class="date-range-filters">
+          <div class="filter-group">
+            <label for="filterLastTxnDateFrom">From</label>
+            <input type="date" id="filterLastTxnDateFrom" onchange="filterClients()">
+          </div>
+          <div class="filter-group">
+            <label for="filterLastTxnDateTo">To</label>
+            <input type="date" id="filterLastTxnDateTo" onchange="filterClients()">
+          </div>
+        </div>
+      </div>
+      
+      <div class="date-range-group">
+        <div class="date-range-title">Closure Date Range</div>
+        <div class="date-range-filters">
+          <div class="filter-group">
+            <label for="filterClosureDateFrom">From</label>
+            <input type="date" id="filterClosureDateFrom" onchange="filterClients()">
+          </div>
+          <div class="filter-group">
+            <label for="filterClosureDateTo">To</label>
+            <input type="date" id="filterClosureDateTo" onchange="filterClients()">
+          </div>
+        </div>
+      </div>
+      
+      <label class="checkbox-label">
+        <input type="checkbox" id="filterPendingCheckbox" onchange="filterClients()">
+        Payment Due
+      </label>
+    </div>
+  </section>
+
+  <!-- Dashboard - White with purple accents -->
+  <section class="mini-dashboard">
+    <div class="dash-card total">
+      <p>Total Clients</p>
+      <h2 id="totalClients">0</h2>
+    </div>
+    <div class="dash-card active">
+      <p>Active Clients</p>
+      <h2 id="activeClients">0</h2>
+    </div>
+    <div class="dash-card pending">
+      <p>Pending Amount</p>
+      <h2 id="pendingClients">0</h2>
+    </div>
+  </section>
+
+  <!-- Client Container - White with purple accents -->
+  <main id="clientContainer">
+
+    <!-- Example Client -->
+    <div class="client-card"
+      data-city="Mumbai"
+      data-state="MH"
+      data-jv="Partner X"
+      data-status="Completed"
+      data-clientstatus="Active"
+      data-onboardingdate="2025-09-01"
+      data-lasttxn="2025-09-12"
+      data-sales="John Doe"
+      data-closure="2025-09-30"
+      data-pending="500">
+
+      <div class="client-header">
+        <div>
+          <h2>NETWORK NAME A</h2>
+          <p>Mumbai, MH</p>
+        </div>
+        <span class="term-info">12M • ₹50,000 • Pending ₹500</span>
+      </div>
+
+      <div class="client-content">
+        <!-- Left -->
+        <div class="col">
+          <h3>General</h3>
+          <p><strong>Note:</strong> Priority Client</p>
+          <p><strong>Login ID:</strong> LCO12345</p>
+          <p><strong>Onboarding:</strong> Completed</p>
+          <p><strong>Client Status:</strong> Active</p>
+          <p><strong>Closure:</strong> 2025-09-30</p>
+        </div>
+
+        <!-- Middle -->
+        <div class="col">
+          <h3>Assignments</h3>
+          <p><strong>Assigned:</strong> Manager 1</p>
+          <p><strong>LCO ID:</strong> LCO-789</p>
+          <p><strong>Onboarding Date:</strong> 2025-09-01</p>
+          <p><strong>Last Txn:</strong> 2025-09-12</p>
+          <p><strong>Sales:</strong> John Doe</p>
+        </div>
+
+        <!-- Right -->
+        <div class="col">
+          <h3>Business</h3>
+          <p><strong>JV Partner:</strong> Partner X</p>
+          <p><strong>Subbase:</strong> 1500</p>
+          <p><strong>Transactions:</strong> 25</p>
+          <div class="btn-group">
+            <button class="card-btn check-btn"><i class="fas fa-info-circle"></i> Check Details</button>
+            <button class="card-btn delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer - Black -->
+  <footer class="footer">
+    <p>© 2023 Client Onboarding Dashboard | Designed with 💜</p>
+  </footer>
+
+  <script>
+    function filterClients() {
+      let search = document.getElementById("searchBar").value.toLowerCase();
+      let city = document.getElementById("filterCity").value;
+      let state = document.getElementById("filterState").value;
+      let jv = document.getElementById("filterJV").value;
+      let onboarding = document.getElementById("filterOnboarding").value;
+      let clientStatus = document.getElementById("filterClientStatus").value;
+      let salesPerson = document.getElementById("filterSalesPerson").value;
+      let pendingCheck = document.getElementById("filterPendingCheckbox").checked;
+      
+      // Date range filters
+      let onboardingDateFrom = document.getElementById("filterOnboardingDateFrom").value;
+      let onboardingDateTo = document.getElementById("filterOnboardingDateTo").value;
+      let lastTxnDateFrom = document.getElementById("filterLastTxnDateFrom").value;
+      let lastTxnDateTo = document.getElementById("filterLastTxnDateTo").value;
+      let closureDateFrom = document.getElementById("filterClosureDateFrom").value;
+      let closureDateTo = document.getElementById("filterClosureDateTo").value;
+
+      let clients = document.querySelectorAll(".client-card");
+      let total = 0, active = 0, pending = 0;
+
+      clients.forEach(client => {
+        let matches = true;
+
+        let clientCity = client.dataset.city;
+        let clientState = client.dataset.state;
+        let clientJV = client.dataset.jv;
+        let clientOnboardingStatus = client.dataset.status;
+        let clientStatusValue = client.dataset.clientstatus;
+        let clientOnboardingDate = client.dataset.onboardingdate;
+        let clientLastTxn = client.dataset.lasttxn;
+        let clientSales = client.dataset.sales;
+        let clientClosure = client.dataset.closure;
+        let clientPending = parseInt(client.dataset.pending);
+
+        // 🔍 Search filter
+        if (!client.innerText.toLowerCase().includes(search)) matches = false;
+
+        // Dropdown filters
+        if (city !== "all" && city !== clientCity) matches = false;
+        if (state !== "all" && state !== clientState) matches = false;
+        if (jv !== "all" && jv !== clientJV) matches = false;
+        if (onboarding !== "all" && onboarding !== clientOnboardingStatus) matches = false;
+        if (clientStatus !== "all" && clientStatus !== clientStatusValue) matches = false;
+        if (salesPerson !== "all" && salesPerson !== clientSales) matches = false;
+
+        // Date range filters
+        if (onboardingDateFrom && clientOnboardingDate < onboardingDateFrom) matches = false;
+        if (onboardingDateTo && clientOnboardingDate > onboardingDateTo) matches = false;
+        if (lastTxnDateFrom && clientLastTxn < lastTxnDateFrom) matches = false;
+        if (lastTxnDateTo && clientLastTxn > lastTxnDateTo) matches = false;
+        if (closureDateFrom && clientClosure < closureDateFrom) matches = false;
+        if (closureDateTo && clientClosure > closureDateTo) matches = false;
+
+        // Pending checkbox
+        if (pendingCheck && clientPending <= 0) matches = false;
+
+        // Show/hide
+        if (matches) {
+          client.style.display = "block";
+          total++;
+          if (clientStatusValue === "Active") active++;
+          if (clientPending > 0) pending++;
+        } else {
+          client.style.display = "none";
+        }
+      });
+
+      // Update mini-dashboard
+      document.getElementById("totalClients").innerText = total;
+      document.getElementById("activeClients").innerText = active;
+      document.getElementById("pendingClients").innerText = pending;
+    }
+
+    // Toggle filter panel
+    document.getElementById("toggleFilters").addEventListener("click", () => {
+      const filtersSection = document.getElementById("filtersSection");
+      const toggleButton = document.getElementById("toggleFilters");
+      const filterText = toggleButton.querySelector(".filter-text");
+      const filterIcon = toggleButton.querySelector("i");
+      
+      filtersSection.classList.toggle("hidden");
+      
+      if (filtersSection.classList.contains("hidden")) {
+        filterText.textContent = "Show Filters";
+        filterIcon.className = "fas fa-filter";
+      } else {
+        filterText.textContent = "Hide Filters";
+        filterIcon.className = "fas fa-eye-slash";
+      }
+    });
+
+    // Add Service Provider button functionality
+    document.getElementById("addProviderBtn").addEventListener("click", () => {
+      alert("Add Service Provider functionality would open here!");
+      // In a real application, this would open a modal or navigate to a form
+    });
+
+    // Initialize on load
+    window.onload = filterClients;
+  </script>
+</body>
+</html>
